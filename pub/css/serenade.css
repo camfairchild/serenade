@@ -1,5 +1,5 @@
 .serenade-outer {
-    
+    font-size: 15px;
 }
 
 .serenade-staff-holder {
@@ -11,29 +11,40 @@
     flex-direction: row;
     flex-wrap: wrap;
     border: 2px solid red;
-}
-
-.serenade-bar-holder {
-    display: flex;
-    flex-direction: column;
-    row-gap: 2rem;
+    padding: 10px;
 }
 
 .serenade-bar {
-    margin: 1rem;
-    border-right: 1px solid #000;
-}
-
-.serenade-top-bar {
     border-bottom: 1px solid #000;
-}
-
-.serenade-bottom-bar {
-    border-top: 1px solid #000;
+    display: grid;
+    grid-template-rows: repeat(29, 1em);
 }
 
 .serenade-note {
     position: relative;
-    height: 0.5rem;
-    width: 0.5rem;
+    align-self: center;
+    justify-self: center;
+    z-index: 1;
+}
+.serenade-line {
+    position: relative;
+    grid-column: 1 / -1;
+    align-self: center;
+    justify-self: stretch;
+    z-index: -1;
+    height: 0px;
+    border: 0.02em solid #000;
+}
+
+.serenade-clef {
+    top: 0.5em;
+    position: relative;
+    align-self: stretch center;
+    justify-self: stretch;
+    z-index: 1;
+    height: 100%;
+}
+
+.serenade-clef img {
+    height: 100%;
 }

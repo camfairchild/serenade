@@ -5,7 +5,7 @@ class Serenade {
     }
 
     render(data) {
-        // remove any existing children
+        // emove any existing children
         this.element.innerHTML = '';
         // fill with the visualized data
         this.element.appendChild(this.visualize(data));
@@ -48,44 +48,45 @@ class Staff {
         this.data = data;
     }
 
+    sortNotes(a, b) {
+        if (a.startTime < b.startTime) {
+            return -1;
+        }
+        if (a.startTime > b.startTime) {
+            return 1;
+        }
+        return 0;
+    }
+
     render() {
         const staff = document.createElement('div');
         staff.classList.add('serenade-staff');
         let bar_width;
         let num_bars;
-        let notes_top;
-        let notes_bottom;
+        let notes;
+        let left_right = true;
 
         if (this.data.music['left'] && this.data.music['right']) {
             bar_width = this.calculateBarWidth(this.data.music['left'].time_signature);
-            notes_top = this.data.music['left'].notes
-            notes_bottom = this.data.music['right'].notes
-            
+            notes = this.data.music['left'].notes.concat(this.data.music['right'].notes);
+
         } else {
             // one hand only
             bar_width = this.calculateBarWidth(this.data.music.time_signature);
-            notes_top = this.data.music.notes
-            notes_bottom = []
+            notes = this.data.music.notes
+            left_right = false;
         }
 
-        num_bars = this.calculateNumBars(notes_top.concat(notes_bottom), bar_width);
+        notes.sort(this.sortNotes)
+
+        num_bars = this.calculateNumBars(notes, bar_width);
         
         for (let i = 0; i < num_bars; i++) {
-            const bar = document.createElement('div');
-            bar.classList.add('serenade-bar-holder');
+            const bar_notes = this.getBarNotes(i, bar_width, notes);
 
-            const bar_notes_top = this.getBarNotes(i, bar_width, notes_top);
-            const bar_notes_bottom = this.getBarNotes(i, bar_width, notes_bottom);
-
-            const clef = i == 0 ? this.data.clef : null;
-            const top_bar = new Bar(i, bar_width, bar_notes_top, clef).render();
-            const bottom_bar = new Bar(i, bar_width, bar_notes_bottom, clef).render()
+            const clef = (i == 0);
+            const bar = new Bar(i, bar_width, bar_notes, clef, left_right).render();
             
-            top_bar.classList.add('serenade-top-bar');
-            bottom_bar.classList.add('serenade-bottom-bar');
-
-            bar.appendChild(top_bar);
-            bar.appendChild(bottom_bar);
             staff.appendChild(bar);
         }
 
@@ -97,7 +98,7 @@ class Staff {
         for (let j = 0; j < notes.length; j++) {
             const note = notes[j];
 
-            if (note.startTime >= i * bar_width) {
+            if (note.startTime >= i * bar_width && note.startTime < (i + 1) * bar_width) {
                 
                 bar_notes.push(note);
             }
@@ -146,42 +147,103 @@ class Staff {
 }
 
 class Bar {
-    constructor(index=-1, bar_width, notes=[], clef='treble') {
+    constructor(index=-1, bar_width, notes=[], clef=false, left_right=true) {
         this.notes = notes;
         this.index = index;
         this.bar_width = bar_width;
         this.clef = clef;
+        this.left_right = left_right;
+        this.notes_width = this.calculateNotesWidth();
     }
 
-    getNoteTop(note, clef) {
+    calculateNotesWidth() {
+        const width = this.notes.reduce((prev, note) => {
+            if (prev.startTime == note.startTime) {
+                return prev;
+            } else {
+                return {
+                    startTime: note.startTime,
+                    width: prev.width + 1,
+                };
+            }
+        }, {
+            startTime: -1,
+            width: 0
+        });
+        return width.width;
+    }
+
+    getNoteTop(note) {
+        const octave = parseInt(note.octave);
+
         let offset = 0;
-        const clef_offsets = {
-            'treble': 0  ,
-            'bass': -2,
-        }
         const note_offsets = {
-            'c': 0,
-            'd': 2,
+            'b': 0,
+            'a': 1,
+            'g': 2,
+            'f': 3,
             'e': 4,
-            'f': 5,
-            'g': 7,
-            'a': 9,
-            'b': 11,
+            'd': 5,
+            'c': 6,
         }
 
-
+        offset = note_offsets[note.note.toLowerCase()] + ((octave - 5) * -7) + 1;
         return offset;
     }
 
     render() {
         const bar = document.createElement('div');
         bar.classList.add('serenade-bar');
+        let clef_offset = 0;
+        if (this.clef) {
+            const treble_clef = new Clef('Treble').render();
+            clef_offset = 8;
+            treble_clef.style.gridRow = '1 / span 14';
+            treble_clef.style.gridColumn = `1 / span ${clef_offset}`;
+            if (this.left_right) {
+                const bass_clef = new Clef('Bass').render();
+                bass_clef.style.gridRow = '16 / span 7';
+                bass_clef.style.gridColumn = `1 / span ${clef_offset}`;
+                bar.appendChild(bass_clef);
+            }
+            bar.appendChild(treble_clef);
+        }
+        bar.style.gridTemplateColumns = `repeat(${this.notes_width + 4 + clef_offset}, 1em)`
+        for (let j = 0; j < 5; j++) {
+            const line = document.createElement('div');
+            line.classList.add('serenade-line');
+            line.style.gridRow = `${j * 2 + 4}`;
+            bar.appendChild(line);
+
+            if (this.left_right) {
+                const lower_line = document.createElement('div');
+                lower_line.classList.add('serenade-line');
+                lower_line.style.gridRow = `${j * 2 + 16}`;
+                bar.appendChild(lower_line);
+            }
+        }
+        let last_note_start_time = -1;
+        let last_note_adj = 0;
+        if (this.clef) {
+            last_note_adj = 8;
+        }
         for (let i = 0; i < this.notes.length; i++) {
             const note = this.notes[i];
-            const adjusted_start = note.startTime - this.index * this.bar_width 
-            const note_element = new Note(note, adjusted_start).render();
-            note_element.style.left = `${adjusted_start * 100}%`;
-            note_element.style.top = `${this.getNoteTop(note, this.clef)}%`;
+            let adjusted_start;
+            if (note.startTime != last_note_start_time) {
+                adjusted_start = last_note_adj + 1;
+            } else {
+                adjusted_start = last_note_adj;
+            }
+
+            last_note_start_time = note.startTime;
+            last_note_adj = adjusted_start;
+            
+            const note_element = new Note(note).render();
+
+            note_element.style.gridColumn = `${adjusted_start}`;
+            const topOffset = this.getNoteTop(note);
+            note_element.style.gridRow = `${topOffset}`;
             bar.appendChild(note_element);
         }
         return bar;
@@ -189,21 +251,43 @@ class Bar {
 }
 
 class Note {
-    constructor(note_data, start_time) {
+    constructor(note_data) {
         this.data = note_data;
-        this.start_time = start_time;
     }
 
     render() {
         const note = document.createElement('div');
         note.classList.add('serenade-note');
         note.classList.add('serenade-note-' + this.data.duration);
-        note.style.left = this.startTime * 100 + '%';
 
         const note_text = document.createTextNode(this.data.note);
         note.appendChild(note_text);
 
         return note;
+    }
+
+}
+
+class Clef {
+    constructor(clef) {
+        this.clef = clef;
+    }
+
+    render() {
+        const clef = document.createElement('div');
+        const img = document.createElement('img');
+        clef.classList.add('serenade-clef');
+        
+        if (this.clef === 'Treble') {
+            img.src = './images/treble.png';
+            img.alt = 'Treble Clef';
+        } else {
+            img.src = './images/bass.png';
+            img.alt = 'Bass Clef';
+        }
+        clef.appendChild(img);
+
+        return clef;
     }
 
 }
