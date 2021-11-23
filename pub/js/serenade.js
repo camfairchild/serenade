@@ -187,7 +187,8 @@ class Bar {
             'c': 6,
         }
 
-        offset = note_offsets[note.note.toLowerCase()] + ((octave - 5) * -7) + 1;
+        offset = note_offsets[note.note.toLowerCase()] + ((octave - 5) * -7) + 2;
+        console.log(note.note, note.octave, offset)
         return offset;
     }
 
@@ -198,11 +199,11 @@ class Bar {
         if (this.clef) {
             const treble_clef = new Clef('Treble').render();
             clef_offset = 8;
-            treble_clef.style.gridRow = '1 / span 14';
+            treble_clef.style.gridRow = '2 / span 14';
             treble_clef.style.gridColumn = `1 / span ${clef_offset}`;
             if (this.left_right) {
                 const bass_clef = new Clef('Bass').render();
-                bass_clef.style.gridRow = '16 / span 7';
+                bass_clef.style.gridRow = '17 / span 7';
                 bass_clef.style.gridColumn = `1 / span ${clef_offset}`;
                 bar.appendChild(bass_clef);
             }
@@ -212,13 +213,13 @@ class Bar {
         for (let j = 0; j < 5; j++) {
             const line = document.createElement('div');
             line.classList.add('serenade-line');
-            line.style.gridRow = `${j * 2 + 4}`;
+            line.style.gridRow = `${j * 2 + 5}`;
             bar.appendChild(line);
 
             if (this.left_right) {
                 const lower_line = document.createElement('div');
                 lower_line.classList.add('serenade-line');
-                lower_line.style.gridRow = `${j * 2 + 16}`;
+                lower_line.style.gridRow = `${j * 2 + 17}`;
                 bar.appendChild(lower_line);
             }
         }
@@ -243,8 +244,48 @@ class Bar {
 
             note_element.style.gridColumn = `${adjusted_start}`;
             const topOffset = this.getNoteTop(note);
-            note_element.style.gridRow = `${topOffset}`;
+            note_element.style.gridRow = `${topOffset.toString()}`;
             bar.appendChild(note_element);
+
+            // add external lines if outside of staff
+            const note_ = note.note.toLowerCase()
+            if (topOffset <= 3) {
+                // add lines on/below
+                const lines_to_add = Math.ceil((4 - topOffset)/2)
+                for (let i = 0; i < lines_to_add; i++) {
+                    const back_line = document.createElement('div');
+                    back_line.classList.add('serenade-line');
+                    back_line.classList.add('serenade-line-unit')
+                    back_line.style.gridRow = `${i * -2 + 3}`;
+                    back_line.style.gridColumn = `${adjusted_start}`;
+                    bar.appendChild(back_line);
+                }
+            } else if (topOffset === 15) {
+                // add lines on
+                const back_line = document.createElement('div');
+                back_line.classList.add('serenade-line');
+                back_line.classList.add('serenade-line-unit')
+                back_line.style.gridRow = `${15}`;
+                back_line.style.gridColumn = `${adjusted_start}`;
+                bar.appendChild(back_line);
+            } else if (topOffset >= 27) {
+                // add lines on/below
+                const lines_to_add = Math.ceil((topOffset - 26)/2)
+
+                for (let i = 0; i < lines_to_add; i++) {
+                    const back_line = document.createElement('div');
+                    back_line.classList.add('serenade-line');
+                    back_line.classList.add('serenade-line-unit')
+                    back_line.style.gridRow = `${i * 2 + 27}`;
+                    back_line.style.gridColumn = `${adjusted_start}`;
+                    bar.appendChild(back_line);
+                }
+            }
+            
+            // flip stem if on second staff
+            if (topOffset >= 16) {
+                note_element.classList.add('serenade-note-lower')
+            }
         }
         return bar;
     }
@@ -260,8 +301,30 @@ class Note {
         note.classList.add('serenade-note');
         note.classList.add('serenade-note-' + this.data.duration);
 
-        const note_text = document.createTextNode(this.data.note);
-        note.appendChild(note_text);
+        const note_img = document.createElement('img');
+        note_img.src = `/images/${this.data.duration}.png`
+        /*switch (this.data.duration) {
+            case 'eighth':
+                note_img.src = '/images/half.png'
+                note_img.classList.add('serenade-note-closed')
+                break
+            case 'quarter':
+                note_img.src = '/images/closed.png'
+                note_img.classList.add('serenade-note-closed')
+                break
+            case 'sixteenth':
+                note_img.src = '/images/closed.png'
+                note_img.classList.add('serenade-note-closed')
+                break
+            default:
+                note_img.src = '/images/open.png'
+                note_img.classList.add('serenade-note-open')
+        }*/
+
+        const note_text = document.createTextNode(`${this.data.note}${this.data.octave}`);
+        
+        note.appendChild(note_img);
+        //note.appendChild(note_text);
 
         return note;
     }
