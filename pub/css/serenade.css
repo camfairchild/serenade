@@ -1,0 +1,39 @@
+.serenade-outer {
+    
+}
+
+.serenade-staff-holder {
+    
+}
+
+.serenade-staff {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    border: 2px solid red;
+}
+
+.serenade-bar-holder {
+    display: flex;
+    flex-direction: column;
+    row-gap: 2rem;
+}
+
+.serenade-bar {
+    margin: 1rem;
+    border-right: 1px solid #000;
+}
+
+.serenade-top-bar {
+    border-bottom: 1px solid #000;
+}
+
+.serenade-bottom-bar {
+    border-top: 1px solid #000;
+}
+
+.serenade-note {
+    position: relative;
+    height: 0.5rem;
+    width: 0.5rem;
+}
