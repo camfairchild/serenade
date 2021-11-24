@@ -1,9 +1,6 @@
 .serenade-outer {
     font-size: 15px;
-}
-
-.serenade-staff-holder {
-    
+    margin-top: 2em;
 }
 
 .serenade-staff {
@@ -17,7 +14,6 @@
 .serenade-bar {
     display: grid;
     grid-template-rows: repeat(29, 0.5em);
-    border-right: solid 0.2em #000;
 }
 
 .serenade-note {
@@ -65,7 +61,7 @@
 
 .serenade-note-eighth img{
     width: 1.75em;
-    margin-bottom: 0.3em;
+    margin-bottom: -0.1em;
 }
 
 .serenade-note-half img {
@@ -77,7 +73,55 @@
     margin-bottom: -0.1em;
 }
 
+.serenade-note-whole img {
+    width: 1.2em;
+    margin-bottom: -0.1em;
+}
+
+.serenade-note-sixteenth img {
+    width: 1.7em;
+    margin-bottom: -0.2em;
+}
+
+.serenade-note-sixteenth.serenade-note-lower {
+    width: 1.5em;
+    margin-bottom: -0.1em;
+    margin-left: -0.4em
+}
+
+.serenade-note-eighth.serenade-note-lower {
+    margin-bottom: -0.1em;
+    margin-left: -0.6em
+}
+
 .serenade-note-lower {
     transform: rotate(180deg);
     align-self: start;
+}
+
+.serenade-time-sig {
+    font-size: 2em;
+    font-weight: bold;
+    font-style: oblique;
+    margin-bottom: 0;
+    align-self: auto;
+}
+
+.serenade-time-sig-top {
+    margin-bottom: -0.3em;
+}
+
+.serenade-time-sig-bottom {
+    margin-top: -0.3em;
+}
+
+.serenade-bar-border {
+    width: 0.2em;
+    background-color: #000;
+    margin-top: 0.2em;
+    margin-bottom: 0.2em;
+    grid-column: 14;
+    justify-self: center;
+    align-self: stretch;
+    z-index: 2;
 }

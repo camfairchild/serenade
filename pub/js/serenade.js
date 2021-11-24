@@ -85,7 +85,8 @@ class Staff {
             const bar_notes = this.getBarNotes(i, bar_width, notes);
 
             const clef = (i == 0);
-            const bar = new Bar(i, bar_width, bar_notes, clef, left_right).render();
+            const time_sigs = [this.data.music['left']?.time_signature || this.data.music.time_signature, this.data.music['right']?.time_signature]
+            const bar = new Bar(i, bar_width, bar_notes, time_sigs, clef, left_right).render();
             
             staff.appendChild(bar);
         }
@@ -97,7 +98,7 @@ class Staff {
         let bar_notes = [];
         for (let j = 0; j < notes.length; j++) {
             const note = notes[j];
-
+            // assumes no split notes
             if (note.startTime >= i * bar_width && note.startTime < (i + 1) * bar_width) {
                 
                 bar_notes.push(note);
@@ -111,6 +112,7 @@ class Staff {
         'half': 2,
         'quarter': 1,
         'eighth': 0.5,
+        'sixteenth': 0.25,
         '16th': 0.25,
         '32nd': 0.125,
         '64th': 0.0625,
@@ -128,7 +130,9 @@ class Staff {
     calculateBarWidth(time_signature) {
         if (time_signature.includes('/')) {
             const [num, denom] = time_signature.split('/');
-            return parseFloat(num) / parseFloat(denom) * 4;
+            const width = parseFloat(num) / parseFloat(denom) * 4
+
+            return width;
         } else {
             const time_sigs = {
                 'common': '4/4',
@@ -147,13 +151,14 @@ class Staff {
 }
 
 class Bar {
-    constructor(index=-1, bar_width, notes=[], clef=false, left_right=true) {
+    constructor(index=-1, bar_width, notes=[], time_sigs, clef=false, left_right=true) {
         this.notes = notes;
         this.index = index;
         this.bar_width = bar_width;
         this.clef = clef;
         this.left_right = left_right;
         this.notes_width = this.calculateNotesWidth();
+        this.time_sigs = time_sigs;
     }
 
     calculateNotesWidth() {
@@ -188,7 +193,7 @@ class Bar {
         }
 
         offset = note_offsets[note.note.toLowerCase()] + ((octave - 5) * -7) + 2;
-        console.log(note.note, note.octave, offset)
+
         return offset;
     }
 
@@ -198,16 +203,28 @@ class Bar {
         let clef_offset = 0;
         if (this.clef) {
             const treble_clef = new Clef('Treble').render();
-            clef_offset = 8;
+            clef_offset = 5;
             treble_clef.style.gridRow = '2 / span 14';
             treble_clef.style.gridColumn = `1 / span ${clef_offset}`;
+
+            const time_signature1 = new TimeSig(this.time_sigs[0]).render()
+            time_signature1.style.gridRow = '5 / span 9'
+            time_signature1.style.gridColumn = `${clef_offset} / span 2`
+
+
             if (this.left_right) {
                 const bass_clef = new Clef('Bass').render();
                 bass_clef.style.gridRow = '17 / span 7';
                 bass_clef.style.gridColumn = `1 / span ${clef_offset}`;
                 bar.appendChild(bass_clef);
+
+                const time_signature2 = new TimeSig(this.time_sigs[1]).render()
+                time_signature2.style.gridRow = '17 / span 9'
+                time_signature2.style.gridColumn = `${clef_offset} / span 2`
+                bar.appendChild(time_signature2)
             }
             bar.appendChild(treble_clef);
+            bar.appendChild(time_signature1)
         }
         bar.style.gridTemplateColumns = `repeat(${this.notes_width + 4 + clef_offset}, 1em)`
         for (let j = 0; j < 5; j++) {
@@ -287,6 +304,21 @@ class Bar {
                 note_element.classList.add('serenade-note-lower')
             }
         }
+
+        
+
+        // add bar border/end
+        const vbar_top = document.createElement('div')
+        bar.appendChild(vbar_top)
+        vbar_top.style.gridRow = '5 / span 9'
+        vbar_top.classList.add('serenade-bar-border')
+        
+        if (this.left_right) {
+            const vbar_bottom = document.createElement('div')
+            vbar_bottom.classList.add('serenade-bar-border')
+            bar.appendChild(vbar_bottom)
+            vbar_bottom.style.gridRow = '17 / span 9'
+        }
         return bar;
     }
 }
@@ -351,6 +383,34 @@ class Clef {
         clef.appendChild(img);
 
         return clef;
+    }
+
+}
+
+class TimeSig {
+    constructor(time_signature) {
+        this.sig = time_signature;
+    }
+
+    render() {
+        const sig = document.createElement('div');
+        const top = document.createElement('div');
+        const bottom = document.createElement('div');
+        const [top_txt, bottom_text] = this.sig.split('/')
+        sig.classList.add('serenade-time-sig');
+        
+        top.classList.add('serenade-time-sig-top')
+        bottom.classList.add('serenade-time-sig-bottom')
+
+        const text1 = document.createTextNode(top_txt.toString())
+        const text2 = document.createTextNode(bottom_text.toString())
+        top.appendChild(text1)
+        bottom.appendChild(text2)
+
+        sig.appendChild(top);
+        sig.appendChild(bottom);
+
+        return sig;
     }
 
 }

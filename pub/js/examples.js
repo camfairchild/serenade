@@ -226,7 +226,7 @@ example2 = {
     music: {
         'left': {
             clef: 'treble',
-            time_signature: '4/4',
+            time_signature: '3/4',
             key: 'G',
             key_signature: 'major',
             notes:
@@ -244,7 +244,7 @@ example2 = {
                     }, {
                         note: 'A',
                         octave: '5',
-                        duration: 'half',
+                        duration: 'quarter',
                         startTime: 2.0,
                     }, 
 
@@ -252,23 +252,23 @@ example2 = {
                         note: 'D',
                         octave: '4',
                         duration: 'quarter',
-                        startTime: 4.0,
+                        startTime: 3.0,
                     }, {
                         note: 'C',
                         octave: '4',
                         duration: 'quarter',
-                        startTime: 5.0,
+                        startTime: 4.0,
                     }, {
                         note: 'B',
                         octave: '3',
-                        duration: 'half',
-                        startTime: 6.0,
+                        duration: 'quarter',
+                        startTime: 5.0,
                     }, 
                 ]
         },
         'right': {
             clef: 'bass',
-            time_signature: '4/4',
+            time_signature: '3/4',
             key: 'G',
             key_signature: 'major',
             notes:
@@ -277,17 +277,17 @@ example2 = {
                     note: 'E',
                     octave: '2',
                     duration: 'quarter',
-                    startTime: 8.0,
+                    startTime: 6.0,
                 }, {
                     note: 'D',
                     octave: '2',
                     duration: 'quarter',
-                    startTime: 9.0,
+                    startTime: 7.0,
                 }, {
                     note: 'C',
                     octave: '2',
-                    duration: 'half',
-                    startTime: 10.0,
+                    duration: 'quarter',
+                    startTime: 8.0,
                 }, 
             ]
         }
@@ -297,5 +297,88 @@ example2 = {
 }
 
 s$('serenade.ex2').render(example2);
+
+example3 = {
+    tempo: 90,
+    music: {
+        'left': {
+            clef: 'treble',
+            time_signature: '3/2',
+            key: 'G',
+            key_signature: 'major',
+            notes:
+                [
+                    {
+                        note: 'G',
+                        octave: '5',
+                        duration: 'sixteenth',
+                        startTime: 0,
+                    }, {
+                        note: 'F',
+                        octave: '5',
+                        duration: 'eighth',
+                        startTime: 0.25,
+                    }, {
+                        note: 'E',
+                        octave: '5',
+                        duration: 'quarter',
+                        startTime: 0.75,
+                    }, 
+
+                    {
+                        note: 'D',
+                        octave: '5',
+                        duration: 'half',
+                        startTime: 1.75,
+                    }, {
+                        note: 'C',
+                        octave: '5',
+                        duration: 'whole',
+                        startTime: 6.0,
+                    }, 
+                ]
+        },
+        'right': {
+            clef: 'bass',
+            time_signature: '3/2',
+            key: 'G',
+            key_signature: 'major',
+            notes:
+            [
+                {
+                    note: 'A',
+                    octave: '3',
+                    duration: 'whole',
+                    startTime: 12.0,
+                }, {
+                    note: 'G',
+                    octave: '3',
+                    duration: 'half',
+                    startTime: 16.0,
+                }, 
+                {
+                    note: 'F',
+                    octave: '3',
+                    duration: 'quarter',
+                    startTime: 18.00,
+                }, {
+                    note: 'E',
+                    octave: '3',
+                    duration: 'eighth',
+                    startTime: 19.0,
+                }, {
+                    note: 'D',
+                    octave: '3',
+                    duration: 'sixteenth',
+                    startTime: 19.5,
+                }, 
+            ]
+        }
+    },
+    visualize: false,
+    editable: false,
+}
+
+s$('serenade.ex3').render(example3);
 
 
