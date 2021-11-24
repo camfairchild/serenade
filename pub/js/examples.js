@@ -218,7 +218,7 @@ example1 = {
     editable: false,
 }
 
-s$('serenade.ex1').render(example1);
+s$('serenade.ex1', example1).render();
 
 
 example2 = {
@@ -296,7 +296,7 @@ example2 = {
     editable: false,
 }
 
-s$('serenade.ex2').render(example2);
+s$('serenade.ex2', example2).render();
 
 example3 = {
     tempo: 90,
@@ -379,6 +379,14 @@ example3 = {
     editable: false,
 }
 
-s$('serenade.ex3').render(example3);
+s$('serenade.ex3', example3).render();
 
+const s = s$('serenade.ex4', example3);
+s.data_ = example2
+s.render()
 
+const ser = new Serenade(example3);
+const elem = ser.render()
+const replace_ = document.querySelector('serenade.ex5');
+replace_.innerHTML = '';
+replace_.appendChild(elem);

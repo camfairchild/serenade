@@ -1,43 +1,30 @@
 class Serenade {
-    constructor(element) {
-        this.element = element;
-        this.music = new Music();
+    constructor(data) {
+        this.music = new Music(data);
+        this.data = data;
     }
 
-    render(data) {
-        // emove any existing children
-        this.element.innerHTML = '';
-        // fill with the visualized data
-        this.element.appendChild(this.visualize(data));
-    }
-
-    visualize(data) {
+    render() {
         const outer = document.createElement('div');
         outer.classList.add('serenade-outer');
-        const inner = this.parse(data);
+        this.music = new Music(this.data);
+        const inner = this.music.render()
         outer.appendChild(inner);
-        return outer;
-    }
-
-    parse(data) {
-        const inner = document.createElement('div');
-        
-        const music = new Music(data).render();
-        inner.appendChild(music);
-
-        return inner;
+        return outer
     }
 }
 
 class Music {
     constructor(data) {
         this.data = data;
+        this.staff = new Staff(data)
     }
 
     render() {
         const staff_holder = document.createElement('div');
         staff_holder.classList.add('serenade-staff-holder');
-        const staff = new Staff(this.data).render()
+        this.staff = new Staff(this.data)
+        const staff = this.staff.render()
         staff_holder.appendChild(staff);
         return staff_holder;
     }
@@ -46,6 +33,26 @@ class Music {
 class Staff {
     constructor(data) {
         this.data = data;
+        this.bars = [];
+        this.notes = [];
+        this.bar_width = 0;
+        this.left_right = true;
+
+        if (this.data.music['left'] && this.data.music['right']) {
+            this.bar_width = this.calculateBarWidth(this.data.music['left'].time_signature);
+            this.notes = this.data.music['left'].notes.concat(this.data.music['right'].notes);
+
+        } else {
+            // one hand only
+            this.bar_width = this.calculateBarWidth(this.data.music.time_signature);
+            this.notes = this.data.music.notes
+            this.left_right = false;
+        }
+
+
+        this.notes.sort(this.sortNotes)
+
+        this.num_bars = this.calculateNumBars(this.notes, this.bar_width);
     }
 
     sortNotes(a, b) {
@@ -61,32 +68,30 @@ class Staff {
     render() {
         const staff = document.createElement('div');
         staff.classList.add('serenade-staff');
-        let bar_width;
-        let num_bars;
-        let notes;
-        let left_right = true;
 
         if (this.data.music['left'] && this.data.music['right']) {
-            bar_width = this.calculateBarWidth(this.data.music['left'].time_signature);
-            notes = this.data.music['left'].notes.concat(this.data.music['right'].notes);
+            this.bar_width = this.calculateBarWidth(this.data.music['left'].time_signature);
+            this.notes = this.data.music['left'].notes.concat(this.data.music['right'].notes);
 
         } else {
             // one hand only
-            bar_width = this.calculateBarWidth(this.data.music.time_signature);
-            notes = this.data.music.notes
-            left_right = false;
+            this.bar_width = this.calculateBarWidth(this.data.music.time_signature);
+            this.notes = this.data.music.notes
+            this.left_right = false;
         }
 
-        notes.sort(this.sortNotes)
+        this.notes.sort(this.sortNotes)
 
-        num_bars = this.calculateNumBars(notes, bar_width);
+        this.num_bars = this.calculateNumBars(this.notes, this.bar_width);
         
-        for (let i = 0; i < num_bars; i++) {
-            const bar_notes = this.getBarNotes(i, bar_width, notes);
+        for (let i = 0; i < this.num_bars; i++) {
+            const bar_notes = this.getBarNotes(i, this.bar_width, this.notes);
 
             const clef = (i == 0);
             const time_sigs = [this.data.music['left']?.time_signature || this.data.music.time_signature, this.data.music['right']?.time_signature]
-            const bar = new Bar(i, bar_width, bar_notes, time_sigs, clef, left_right).render();
+            const bar_ = new Bar(i, this.bar_width, bar_notes, time_sigs, clef, this.left_right)
+            this.bars.push(bar_)
+            const bar = bar_.render();
             
             staff.appendChild(bar);
         }
@@ -415,12 +420,27 @@ class TimeSig {
 
 }
 
-function s$(selector) {
+function s$(selector, data) {
     const element = document.querySelector(selector);
+    this.data_ = data;
+    this.render = render;
+    this.serenade;
+
+    function render() {
+        this.serenade = new Serenade(this.data_);
+        const outer = this.serenade.render();
+
+        // remove any existing children
+        element.innerHTML = '';
+
+        // fill with the visualized data
+        element.appendChild(outer);
+    }
+
     if (!element) {
         throw new Error(`Element ${selector} not found`);
     } else {
-        return new Serenade(element);
+        return this
     }
 }
 
