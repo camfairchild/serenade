@@ -215,7 +215,7 @@ example1 = {
         }
     },
     visualize: false,
-    editable: false,
+    editable: true,
 }
 
 s$('serenade.ex1', example1).render();

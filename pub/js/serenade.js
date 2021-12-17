@@ -2,14 +2,187 @@ class Serenade {
     constructor(data) {
         this.music = new Music(data);
         this.data = data;
+        this.update = this.update.bind(this)
+        this.outer = document.createElement('div');
+        this.outer.classList.add('serenade-outer');
+    }
+
+    update(data) {
+        console.log("Update: ", data)
+        this.data = data;
+        while (this.outer.firstChild) {
+            this.outer.firstChild.remove();
+        }
+        this.render()
+    }
+
+    render() {
+        // input
+        this.input = new SerenadeInput(this.data, this.update);
+        const input = this.input.render();
+        this.outer.appendChild(input);
+
+        this.music = new Music(this.data);
+        const inner = this.music.render()
+        this.outer.appendChild(inner);
+
+        return this.outer
+    }
+}
+
+class SerenadeInput {
+    constructor(data, updateParent) {
+        this.data = data;
+        this.updateParent = updateParent;
+        this.updateEventHandler = this.updateEventHandler.bind(this)
+        this.dataString = this.generateDataString(data);
+    }
+
+    parseTextInput(dataString) {
+        let str = "tempo: 90;left: (clef: treble;key: G;time: 4/4;notes: (D4:eighth:0, B4:eighth:0.5, A4:eighth:1, G4:eighth:1.5, D4:half:2, D4:eighth:4, B4:eighth:4.5, A4:eighth:5, G4:eighth:5.5, E4:half:6, E4:eighth:8, C5:eighth:8.5, B4:eighth:9, A4:eighth:9.5, F4:half:10, D5:eighth:12, D5:eighth:12.5, C5:eighth:13, A4:eighth:13.5, B4:half:14);right: (clef: treble;key: G;time: 4/4;notes: (D4:eighth:0, B4:eighth:0.5, A4:eighth:1, G4:eighth:1.5, D4:half:2, D4:eighth:4, B4:eighth:4.5, A4:eighth:5, G4:eighth:5.5, E4:half:6, E4:eighth:8, C5:eighth:8.5, B4:eighth:9, A4:eighth:9.5, F4:half:10, D5:eighth:12, D5:eighth:12.5, C5:eighth:13, A4:eighth:13.5, B4:half:14);editable: true;"
+        return JSON.parse(dataString)
+    }
+
+    generateDataString(data) {
+        const dataString = JSON.stringify(data, null, 2);
+        /*
+        let dataString = '';
+        if (data.tempo) {
+            dataString += `tempo: ${data.tempo};`
+        }
+        if (data.music) {
+            if (data.music.left) {
+                dataString += `left: (`
+                if (data.music.left.clef) {
+                    dataString += `clef: ${data.music.left.clef};`
+                }
+                if (data.music.left.key) {
+                    dataString += `key: ${data.music.left.key};`
+                }
+                if (data.music.left.time_signature) {
+                    dataString += `time: ${data.music.left.time_signature};`
+                }
+                if (data.music.left.notes) {
+                    dataString += `notes: (`
+                    for (let i = 0; i < data.music.left.notes.length - 1; i++) {
+                        const note = data.music.left.notes[i];
+                        dataString += `${note.note}${note.octave}:${note.duration}:${note.startTime}, `
+                    }
+                    const lastNote = data.music.left.notes[data.music.left.notes.length - 1];
+                    dataString += `${lastNote.note}${lastNote.octave}:${lastNote.duration}:${lastNote.startTime});`
+                }
+
+                if (data.music.right) {
+                    dataString += `right: (`
+                    if (data.music.left.clef) {
+                        dataString += `clef: ${data.music.left.clef};`
+                    }
+                    if (data.music.left.key) {
+                        dataString += `key: ${data.music.left.key};`
+                    }
+                    if (data.music.left.time_signature) {
+                        dataString += `time: ${data.music.left.time_signature};`
+                    }
+                    if (data.music.left.notes) {
+                        dataString += `notes: (`
+                        for (let i = 0; i < data.music.left.notes.length - 1; i++) {
+                            const note = data.music.left.notes[i];
+                            dataString += `${note.note}${note.octave}:${note.duration}:${note.startTime}, `
+                        }
+                        const lastNote = data.music.left.notes[data.music.left.notes.length - 1];
+                        dataString += `${lastNote.note}${lastNote.octave}:${lastNote.duration}:${lastNote.startTime});`
+                    }
+                }
+            } else {
+                dataString += `music: (`
+                if (data.music.left.clef) {
+                    dataString += `clef: ${data.music.left.clef};`
+                }
+                if (data.music.left.key) {
+                    dataString += `key: ${data.music.left.key};`
+                }
+                if (data.music.left.time_signature) {
+                    dataString += `time: ${data.music.left.time_signature};`
+                }
+                if (data.music.left.notes) {
+                    dataString += `notes: (`
+                    for (let i = 0; i < data.music.left.notes.length - 1; i++) {
+                        const note = data.music.left.notes[i];
+                        dataString += `${note.note}${note.octave}:${note.duration}:${note.startTime}, `
+                    }
+                    const lastNote = data.music.left.notes[data.music.left.notes.length - 1];
+                    dataString += `${lastNote.note}${lastNote.octave}:${lastNote.duration}:${lastNote.startTime});`
+                }
+            }
+            
+        }
+        if (data.editable) {
+            dataString += 'editable: true;'
+        }
+        if (data.visualize) {
+            dataString += 'visualize: true;'
+        }*/
+
+        return dataString
+    }
+
+    updateEventHandler(e) {
+        e.preventDefault();
+        const input = e.target.parentElement.children[0];
+        const dataString = input.value;
+        const data = this.parseTextInput(dataString);
+        this.updateParent(data);
+    }
+
+    editButtonEventHandler(e) {
+        e.preventDefault();
+        const editButton = e.target
+        const outer = e.target.parentElement.children[1];
+        if (outer.classList.contains('hidden')) {
+            outer.classList.remove('hidden')
+            editButton.classList.add('serenade-edit-button-close');
+            editButton.classList.remove('serenade-edit-button-edit');
+        } else {
+            outer.classList.add('hidden')
+            editButton.classList.remove('serenade-edit-button-close');
+            editButton.classList.add('serenade-edit-button-edit');
+            
+        }
     }
 
     render() {
         const outer = document.createElement('div');
-        outer.classList.add('serenade-outer');
-        this.music = new Music(this.data);
-        const inner = this.music.render()
-        outer.appendChild(inner);
+        outer.classList.add('serenade-edit-outer');
+
+        const editButton = document.createElement('button');
+        editButton.classList.add('serenade-edit-button');
+        editButton.classList.add('serenade-edit-button-edit');
+        editButton.addEventListener('click', this.editButtonEventHandler);
+        outer.appendChild(editButton);
+
+        const inputOuter = document.createElement('div');
+        inputOuter.classList.add('serenade-edit-input-outer');
+        inputOuter.classList.add('hidden');
+
+        const input = document.createElement('textarea');
+        input.classList.add('serenade-edit-input-inner');
+        input.setAttribute('type', 'text');
+        input.setAttribute('placeholder', 'Edit Serenade Data');
+        input.value = this.dataString;
+
+        const innerButton = document.createElement('button');
+        innerButton.classList.add('serenade-edit-input-button');
+        innerButton.innerText = 'Render';
+        innerButton.addEventListener('click', this.updateEventHandler)
+        inputOuter.appendChild(input);
+        inputOuter.appendChild(innerButton);
+
+        outer.appendChild(inputOuter);
+        
+
+        if (!this.data.editable) {
+            outer.style.display = 'none';
+        }
         return outer
     }
 }
