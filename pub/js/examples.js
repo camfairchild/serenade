@@ -1,5 +1,5 @@
 example1 = {
-    tempo: 60,
+    tempo: 90,
     music: {
         'left': {
             clef: 'treble',
@@ -292,7 +292,7 @@ example2 = {
             ]
         }
     },
-    visualize: false,
+    visualize: true,
     editable: false,
 }
 

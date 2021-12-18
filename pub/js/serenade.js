@@ -137,7 +137,8 @@ class SerenadeVisualizer {
         }
     }
 
-    getDurationAndDelay(note, bpm=30, time_sig='4/4') {
+    getDurationAndDelay(note, bpm=60, time_sig='4/4') {
+        bpm = bpm * 0.5
         const time_sig_split = time_sig.split('/');
         const denom = parseInt(time_sig_split[1]);
         const beat_length = 60 / bpm;
