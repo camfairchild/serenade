@@ -59,7 +59,6 @@ class SerenadeInput {
     }
 
     parseTextInput(dataString) {
-        let str = "tempo: 90;left: (clef: treble;key: G;time: 4/4;notes: (D4:eighth:0, B4:eighth:0.5, A4:eighth:1, G4:eighth:1.5, D4:half:2, D4:eighth:4, B4:eighth:4.5, A4:eighth:5, G4:eighth:5.5, E4:half:6, E4:eighth:8, C5:eighth:8.5, B4:eighth:9, A4:eighth:9.5, F4:half:10, D5:eighth:12, D5:eighth:12.5, C5:eighth:13, A4:eighth:13.5, B4:half:14);right: (clef: treble;key: G;time: 4/4;notes: (D4:eighth:0, B4:eighth:0.5, A4:eighth:1, G4:eighth:1.5, D4:half:2, D4:eighth:4, B4:eighth:4.5, A4:eighth:5, G4:eighth:5.5, E4:half:6, E4:eighth:8, C5:eighth:8.5, B4:eighth:9, A4:eighth:9.5, F4:half:10, D5:eighth:12, D5:eighth:12.5, C5:eighth:13, A4:eighth:13.5, B4:half:14);editable: true;"
         return JSON.parse(dataString)
     }
 
@@ -143,6 +142,8 @@ class SerenadeInput {
             dataString += 'visualize: true;'
         }*/
 
+    generateDataString(data) {
+        const dataString = JSON.stringify(data, null, 2);
         return dataString
     }
 
