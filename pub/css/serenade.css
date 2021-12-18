@@ -173,3 +173,111 @@
     align-self: stretch;
     z-index: 2;
 }
+
+.serenade-visualizer-outer {
+    height: 10em;
+    border: 2px solid #000;
+    margin-top: -1em;
+    
+}
+
+.serenade-visualizer-outer2 {
+    height: 100%;
+    width: 100%;
+    max-width: 80em;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    column-gap: 0.6em;
+    margin: auto;
+}
+
+.serenade-visualizer-play-button {
+    align-self: flex-start;
+    margin-top: 0.4em;
+    margin-right: 0.4em;
+    width: 1.75rem;
+    height: 1.75rem;
+    background-image: url(/images/play.svg);
+    background-origin: border-box;
+    background-position: center;
+    background-size: contain;
+}
+
+
+.serenade-visualizer-inner {
+    border-right: 1px solid #000;
+    height: auto;
+    width: 100%;
+    position: relative;
+}
+
+.serenade-visualizer-top {
+    z-index: 2;
+    height: 60%;
+    position: absolute;
+    width: 100%;
+}
+
+.serenade-visualizer-bottom {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    position: absolute;
+    width: 100%;
+}
+
+.serenade-visualize-button {
+    align-self: flex-end;
+    width: 1.75rem;
+    height: 1.75rem;
+}
+
+    .serenade-visualize-button-show {
+        background-image: url(/images/visualize.svg);
+        background-origin: border-box;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: 120%;
+    }
+
+    .serenade-visualize-button-close {
+        background-image: url(/images/close.svg);
+    }
+
+.serenade-buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    column-gap: 0.5em;
+}
+
+.serenade-visualizer-key {
+    animation-play-state: paused;
+}
+
+    .serenade-visualizer-key-top {
+        height: 100%;
+        width: 1.45%;
+        background-color: #000;
+        top: 0;
+        border: 0.1px solid #000;
+        position: absolute;
+    }
+
+    .serenade-visualizer-key-bottom {
+        height: 100%;
+        width: 3.45%;
+        border: 0.1px solid #000;
+    }
+
+
+@keyframes playBottom {
+    from {background-color: white;}
+    to {background-color: #e64b40;}
+  }
+  
+@keyframes playTop {
+    from {background-color: black;}
+    to {background-color: #e64b40;}
+  }

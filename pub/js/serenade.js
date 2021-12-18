@@ -18,7 +18,6 @@ class Serenade {
     }
 
     update(data) {
-        console.log("Update: ", data)
         this.data = data;
         while (this.outer.firstChild) {
             this.outer.firstChild.remove();
@@ -37,16 +36,297 @@ class Serenade {
     }
 
     render() {
+        const buttons = document.createElement('div');
+        buttons.classList.add('serenade-buttons');
+        // visualizer show button
+        let showButton = document.createElement('button');
+        showButton.classList.add('serenade-visualize-button');
+        showButton.classList.add('serenade-visualize-button-show');
+        buttons.appendChild(showButton);
+
+        if (!this.data.visualize) {
+            showButton.classList.add('hidden');
+        }
+        
+        // input show button
+        const editButton = document.createElement('button');
+        editButton.classList.add('serenade-edit-button');
+        editButton.classList.add('serenade-edit-button-edit');
+        buttons.appendChild(editButton);
+        if (!this.data.editable) {
+            editButton.classList.add('hidden');
+        }
+
+        this.outer.appendChild(buttons);
+
         // input
         this.input = new SerenadeInput(this.data, this.update);
         const input = this.input.render();
         this.outer.appendChild(input);
 
+        editButton.addEventListener('click', this.input.editButtonEventHandler.bind(this.input));
+
         this.music = new Music(this.data);
         const inner = this.music.render()
         this.outer.appendChild(inner);
 
+        this.visualizer = new SerenadeVisualizer(this.data);
+        const visualizer = this.visualizer.render();
+        this.outer.appendChild(visualizer);
+        if (!this.data.visualize) {
+            showButton.classList.add('hidden');
+        }
+
+        showButton.addEventListener('click', this.visualizer.toggleShowHide.bind(this.visualizer));
+
         return this.outer
+    }
+}
+
+function make_unique_id(){
+    const datetime = new Date().getTime();
+    return datetime.toString(36).slice(-4);
+}
+class SerenadeVisualizer {
+    constructor(data) {
+        this.data = data;
+        this.notes = null;
+        this.time_sig = '4/4';
+
+        if (this.data.music['left'] && this.data.music['right']) {
+            this.notes = this.data.music['left'].notes.concat(this.data.music['right'].notes); 
+            this.time_sig = this.data.music['left'].time_sig;    
+        } else {
+            // one hand only
+            this.notes = this.data.music.notes
+            this.time_sig = this.data.music.time_sig;
+        }
+
+        // sort again
+        this.notes.sort(Serenade.sortNotes)
+
+        this.keys = []
+    }
+
+    toggleShowHide(event) {
+        event.preventDefault();
+        const button = event.target;
+        if (this.outer.classList.contains('hidden')) {
+            this.outer.classList.remove('hidden');
+            button.classList.remove('serenade-visualize-button-show');
+            button.classList.add('serenade-visualize-button-close');
+        } else {            
+            this.outer.classList.add('hidden');
+            button.classList.add('serenade-visualize-button-show');
+            button.classList.remove('serenade-visualize-button-close');
+        }
+    }
+
+    play(event) {
+        event.preventDefault();
+        console.log('play');
+        // restart all keys
+        for (let i = 0; i < this.keys.length; i++) {
+            const keyElement = this.keys[i];
+            
+            // generate the animation
+            keyElement.style['animation-play-state'] = 'running';
+            const restarted = keyElement.cloneNode(true);
+            keyElement.parentNode.replaceChild(restarted, keyElement);
+            this.keys[i] = restarted;
+        }
+    }
+
+    getDurationAndDelay(note, bpm=30, time_sig='4/4') {
+        const time_sig_split = time_sig.split('/');
+        const denom = parseInt(time_sig_split[1]);
+        const beat_length = 60 / bpm;
+        const durations = {
+            'whole': 1,
+            'half': 0.5,
+            'quarter': 0.25,
+            'eighth': 0.125,
+            'sixteenth': 0.0625,
+            '32nd': 0.03125,
+            '64th': 0.015625,
+        }
+        const duration = durations[note.duration] * beat_length * denom;
+        
+        const delay = note.startTime/denom * beat_length;
+
+        return [duration, delay];
+    }
+
+    getKey(note) {
+        const notes_to_offset = {
+            'C': 0,
+            'C#': 1,
+            'D': 2,
+            'D#': 3,
+            'E': 4,
+            'F': 5,
+            'F#': 6,
+            'G': 7,
+            'G#': 8,
+            'A': 9,
+            'A#': 10,
+            'B': 11,
+        }
+
+        let offset = notes_to_offset[note.note];
+        offset += (note.octave - 2) * 12;
+        return offset;
+    }
+
+    render() {
+        this.outer = document.createElement('div');
+        this.outer.classList.add('serenade-visualizer-outer');
+        this.outer.classList.add('hidden');
+
+        const outer2 = document.createElement('div');
+        outer2.classList.add('serenade-visualizer-outer2');
+        this.outer.appendChild(outer2);
+        
+        const inner = document.createElement('div');
+        inner.classList.add('serenade-visualizer-inner');
+        outer2.appendChild(inner);
+
+        const top = document.createElement('div');
+        top.classList.add('serenade-visualizer-top');
+        inner.appendChild(top);
+
+        const bottom = document.createElement('div');
+        bottom.classList.add('serenade-visualizer-bottom');
+        inner.appendChild(bottom);
+
+        const playButton = document.createElement('button');
+        playButton.classList.add('serenade-visualizer-play-button');
+        playButton.onclick = this.play.bind(this);
+        outer2.appendChild(playButton);
+        
+
+        let durations = {}
+        let delays = {}
+        let notes = {}
+        const not_black_keys = [5,13,19,27,33,41,47,55,57]
+        for (let i = 0; i < 57; i++) {
+            const offset = i;
+
+            let key;
+            let keyElement;
+            if (offset  % 2 === 1) {
+                // potential black key
+                const top_ = (not_black_keys.indexOf(offset) === -1);
+                if (top_) {
+                    key = new SerenadeVisualizerKey(offset, top_);
+                    keyElement = key.render();
+                    top.appendChild(keyElement);
+                    this.keys.push(keyElement); 
+                }
+            } else {
+                key = new SerenadeVisualizerKey(offset, false);
+                keyElement = key.render();
+                bottom.appendChild(keyElement);
+                this.keys.push(keyElement);
+            }
+            
+            // init durations and delays
+            durations[i.toString()] = [];
+            delays[i.toString()] = [];
+            notes[i.toString()] = [];
+        }
+
+        let max_end = 0
+        for (let i = 0; i < this.notes.length; i++) {
+            const note = this.notes[i];
+            const key = this.getKey(note);
+            // get each duration and delay
+            const [duration, delay] = this.getDurationAndDelay(note, this.data.tempo, this.time_sig);
+            durations[key.toString()].push(duration);
+            delays[key.toString()].push(delay);
+            notes[key.toString()].push(note);
+            
+            // update max end time
+            if (delay + duration > max_end) {
+                max_end = delay + duration;
+            }
+        }
+
+        const uid = make_unique_id();
+        const style = document.createElement('style');
+        style.id = `serenade-key-anim-${uid}`;
+        document.head.appendChild(style);
+
+        for (let i = 0; i < this.keys.length; i++) {
+            const keyElement = this.keys[i];
+            const notes_ = notes[i.toString()];
+            const durations_ = durations[i.toString()];
+            const delays_ = delays[i.toString()];
+            if (durations_.length === 0) {
+                continue;
+            }
+            const delays_as_percents = [];
+            const end_as_percents = [];
+            for (let j = 0; j < durations_.length; j++) {
+                // get each start and end as a percentage of max end time
+                const start = delays_[j] / max_end * 100;
+                const end = (delays_[j] + durations_[j]) / max_end * 100;
+                delays_as_percents.push(start);
+                end_as_percents.push(end);
+            }
+
+            let key_animation = `@keyframes serenade-key-anim-${uid}-${i} {`;
+            for (let j = 0; j < delays_as_percents.length; j++) {
+                const start = delays_as_percents[j];
+                const end = end_as_percents[j];
+                const middle = (start + end) / 2;
+
+                const note = notes_[j];
+
+                // generate the animation
+                if (top.contains(keyElement)) {
+                    key_animation += `${start}% {
+                        background-color: black;
+                    } ${middle}% {
+                        background-color: red;
+                    } ${end}% {
+                        background-color: black;
+                    }`;
+                } else {
+                    key_animation += `${start}% {
+                        background-color: white;
+                    } ${middle}% {
+                        background-color: red;
+                    } ${end}% {
+                        background-color: white;
+                    }`;
+                }
+            }
+            key_animation += '}\n';
+            
+            style.innerHTML += key_animation;
+            keyElement.style.animation = `serenade-key-anim-${uid}-${i} ${max_end}s linear`;
+        }
+        return this.outer;
+    }
+}
+
+class SerenadeVisualizerKey {
+    constructor(offset, top=false) {
+        this.offset = offset;
+        this.top = top;
+    }
+
+    render() {
+        const key = document.createElement('div');
+        key.classList.add('serenade-visualizer-key');
+        if (this.top) {
+            key.classList.add(`serenade-visualizer-key-top`);
+            key.style.left = `${this.offset/58 * 100 + 0.73}%`;
+        } else {
+            key.classList.add(`serenade-visualizer-key-bottom`);
+        }
+        return key;
     }
 }
 
@@ -64,86 +344,6 @@ class SerenadeInput {
 
     generateDataString(data) {
         const dataString = JSON.stringify(data, null, 2);
-        /*
-        let dataString = '';
-        if (data.tempo) {
-            dataString += `tempo: ${data.tempo};`
-        }
-        if (data.music) {
-            if (data.music.left) {
-                dataString += `left: (`
-                if (data.music.left.clef) {
-                    dataString += `clef: ${data.music.left.clef};`
-                }
-                if (data.music.left.key) {
-                    dataString += `key: ${data.music.left.key};`
-                }
-                if (data.music.left.time_signature) {
-                    dataString += `time: ${data.music.left.time_signature};`
-                }
-                if (data.music.left.notes) {
-                    dataString += `notes: (`
-                    for (let i = 0; i < data.music.left.notes.length - 1; i++) {
-                        const note = data.music.left.notes[i];
-                        dataString += `${note.note}${note.octave}:${note.duration}:${note.startTime}, `
-                    }
-                    const lastNote = data.music.left.notes[data.music.left.notes.length - 1];
-                    dataString += `${lastNote.note}${lastNote.octave}:${lastNote.duration}:${lastNote.startTime});`
-                }
-
-                if (data.music.right) {
-                    dataString += `right: (`
-                    if (data.music.left.clef) {
-                        dataString += `clef: ${data.music.left.clef};`
-                    }
-                    if (data.music.left.key) {
-                        dataString += `key: ${data.music.left.key};`
-                    }
-                    if (data.music.left.time_signature) {
-                        dataString += `time: ${data.music.left.time_signature};`
-                    }
-                    if (data.music.left.notes) {
-                        dataString += `notes: (`
-                        for (let i = 0; i < data.music.left.notes.length - 1; i++) {
-                            const note = data.music.left.notes[i];
-                            dataString += `${note.note}${note.octave}:${note.duration}:${note.startTime}, `
-                        }
-                        const lastNote = data.music.left.notes[data.music.left.notes.length - 1];
-                        dataString += `${lastNote.note}${lastNote.octave}:${lastNote.duration}:${lastNote.startTime});`
-                    }
-                }
-            } else {
-                dataString += `music: (`
-                if (data.music.left.clef) {
-                    dataString += `clef: ${data.music.left.clef};`
-                }
-                if (data.music.left.key) {
-                    dataString += `key: ${data.music.left.key};`
-                }
-                if (data.music.left.time_signature) {
-                    dataString += `time: ${data.music.left.time_signature};`
-                }
-                if (data.music.left.notes) {
-                    dataString += `notes: (`
-                    for (let i = 0; i < data.music.left.notes.length - 1; i++) {
-                        const note = data.music.left.notes[i];
-                        dataString += `${note.note}${note.octave}:${note.duration}:${note.startTime}, `
-                    }
-                    const lastNote = data.music.left.notes[data.music.left.notes.length - 1];
-                    dataString += `${lastNote.note}${lastNote.octave}:${lastNote.duration}:${lastNote.startTime});`
-                }
-            }
-            
-        }
-        if (data.editable) {
-            dataString += 'editable: true;'
-        }
-        if (data.visualize) {
-            dataString += 'visualize: true;'
-        }*/
-
-    generateDataString(data) {
-        const dataString = JSON.stringify(data, null, 2);
         return dataString
     }
 
@@ -158,13 +358,12 @@ class SerenadeInput {
     editButtonEventHandler(e) {
         e.preventDefault();
         const editButton = e.target
-        const outer = e.target.parentElement.children[1];
-        if (outer.classList.contains('hidden')) {
-            outer.classList.remove('hidden')
+        if (this.outer.classList.contains('hidden')) {
+            this.outer.classList.remove('hidden')
             editButton.classList.add('serenade-edit-button-close');
             editButton.classList.remove('serenade-edit-button-edit');
         } else {
-            outer.classList.add('hidden')
+            this.outer.classList.add('hidden')
             editButton.classList.remove('serenade-edit-button-close');
             editButton.classList.add('serenade-edit-button-edit');
 
@@ -172,18 +371,9 @@ class SerenadeInput {
     }
 
     render() {
-        const outer = document.createElement('div');
-        outer.classList.add('serenade-edit-outer');
-
-        const editButton = document.createElement('button');
-        editButton.classList.add('serenade-edit-button');
-        editButton.classList.add('serenade-edit-button-edit');
-        editButton.addEventListener('click', this.editButtonEventHandler);
-        outer.appendChild(editButton);
-
-        const inputOuter = document.createElement('div');
-        inputOuter.classList.add('serenade-edit-input-outer');
-        inputOuter.classList.add('hidden');
+        this.outer = document.createElement('div');
+        this.outer.classList.add('serenade-edit-input-outer');
+        this.outer.classList.add('hidden');
 
         const input = document.createElement('textarea');
         input.classList.add('serenade-edit-input-inner');
@@ -195,16 +385,13 @@ class SerenadeInput {
         innerButton.classList.add('serenade-edit-input-button');
         innerButton.innerText = 'Render';
         innerButton.addEventListener('click', this.updateEventHandler)
-        inputOuter.appendChild(input);
-        inputOuter.appendChild(innerButton);
-
-        outer.appendChild(inputOuter);
+        this.outer.appendChild(input);
+        this.outer.appendChild(innerButton);
      
-
         if (!this.data.editable) {
-            outer.style.display = 'none';
+            this.outer.style.display = 'none';
         }
-        return outer
+        return this.outer
     }
 }
 
@@ -235,7 +422,6 @@ class Staff {
         if (this.data.music['left'] && this.data.music['right']) {
             this.bar_width = this.calculateBarWidth(this.data.music['left'].time_signature);
             this.notes = this.data.music['left'].notes.concat(this.data.music['right'].notes);
-
         } else {
             // one hand only
             this.bar_width = this.calculateBarWidth(this.data.music.time_signature);
@@ -243,29 +429,26 @@ class Staff {
             this.left_right = false;
         }
 
-        this.notes.sort(Serenade.sortNotes)
+        this.sortNotes()
 
         this.num_bars = this.calculateNumBars(this.notes, this.bar_width);
+    }
+
+    sortNotes() {
+        this.notes.sort((a, b) => {
+            if (a.startTime < b.startTime) {
+                return -1;
+            } else if (a.startTime > b.startTime) {
+                return 1;
+            } else {
+                return 0;
+            }
+        })
     }
 
     render() {
         const staff = document.createElement('div');
         staff.classList.add('serenade-staff');
-
-        if (this.data.music['left'] && this.data.music['right']) {
-            this.bar_width = this.calculateBarWidth(this.data.music['left'].time_signature);
-            this.notes = this.data.music['left'].notes.concat(this.data.music['right'].notes);
-
-        } else {
-            // one hand only
-            this.bar_width = this.calculateBarWidth(this.data.music.time_signature);
-            this.notes = this.data.music.notes
-            this.left_right = false;
-        }
-
-        this.notes.sort(this.sortNotes)
-
-        this.num_bars = this.calculateNumBars(this.notes, this.bar_width);
 
         for (let i = 0; i < this.num_bars; i++) {
             const bar_notes = this.getBarNotes(i, this.bar_width, this.notes);
@@ -447,7 +630,7 @@ class Bar {
 
             const note_element = new Note(note).render();
 
-            note_element.style.gridColumn = `${adjusted_start}`;
+            note_element.style.gridColumn = `${adjusted_start} / span 1`;
             const topOffset = this.getNoteTop(note);
             note_element.style.gridRow = `${topOffset.toString()}`;
             bar.appendChild(note_element);
@@ -541,7 +724,7 @@ class Note {
                 note_img.classList.add('serenade-note-open')
         }*/
 
-        const note_text = document.createTextNode(`${this.data.note}${this.data.octave}`);
+        //const note_text = document.createTextNode(`${this.data.note}${this.data.octave}`);
 
         note.appendChild(note_img);
         //note.appendChild(note_text);
