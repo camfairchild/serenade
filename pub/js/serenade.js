@@ -1,5 +1,15 @@
 class Serenade {
     constructor(data) {
+        if (data.music.left || data.music.right) {
+            if (data.music.left) {
+                data.music.left.notes.sort(this.sortNotes);
+            }
+            if (data.music.right) {
+                data.music.right.notes.sort(this.sortNotes);
+            }
+        } else {
+            data.music.notes.sort(this.sortNotes);
+        }
         this.music = new Music(data);
         this.data = data;
         this.update = this.update.bind(this)
@@ -14,6 +24,16 @@ class Serenade {
             this.outer.firstChild.remove();
         }
         this.render()
+    }
+
+    sortNotes(a, b) {
+        if (a.startTime < b.startTime) {
+            return -1;
+        }
+        if (a.startTime > b.startTime) {
+            return 1;
+        }
+        return 0;
     }
 
     render() {
@@ -146,7 +166,7 @@ class SerenadeInput {
             outer.classList.add('hidden')
             editButton.classList.remove('serenade-edit-button-close');
             editButton.classList.add('serenade-edit-button-edit');
-            
+
         }
     }
 
@@ -178,7 +198,7 @@ class SerenadeInput {
         inputOuter.appendChild(innerButton);
 
         outer.appendChild(inputOuter);
-        
+     
 
         if (!this.data.editable) {
             outer.style.display = 'none';
@@ -222,20 +242,9 @@ class Staff {
             this.left_right = false;
         }
 
-
-        this.notes.sort(this.sortNotes)
+        this.notes.sort(Serenade.sortNotes)
 
         this.num_bars = this.calculateNumBars(this.notes, this.bar_width);
-    }
-
-    sortNotes(a, b) {
-        if (a.startTime < b.startTime) {
-            return -1;
-        }
-        if (a.startTime > b.startTime) {
-            return 1;
-        }
-        return 0;
     }
 
     render() {
@@ -256,7 +265,7 @@ class Staff {
         this.notes.sort(this.sortNotes)
 
         this.num_bars = this.calculateNumBars(this.notes, this.bar_width);
-        
+
         for (let i = 0; i < this.num_bars; i++) {
             const bar_notes = this.getBarNotes(i, this.bar_width, this.notes);
 
@@ -265,7 +274,7 @@ class Staff {
             const bar_ = new Bar(i, this.bar_width, bar_notes, time_sigs, clef, this.left_right)
             this.bars.push(bar_)
             const bar = bar_.render();
-            
+
             staff.appendChild(bar);
         }
 
@@ -278,7 +287,7 @@ class Staff {
             const note = notes[j];
             // assumes no split notes
             if (note.startTime >= i * bar_width && note.startTime < (i + 1) * bar_width) {
-                
+
                 bar_notes.push(note);
             }
         }
@@ -297,7 +306,7 @@ class Staff {
     }
 
     calculateNumBars(notes, bar_width) {
-        
+
 
         const max_end_time = notes.reduce((max, note) => {
             return Math.max(max, note.startTime + this.durations[note.duration]);
@@ -329,7 +338,7 @@ class Staff {
 }
 
 class Bar {
-    constructor(index=-1, bar_width, notes=[], time_sigs, clef=false, left_right=true) {
+    constructor(index = -1, bar_width, notes = [], time_sigs, clef = false, left_right = true) {
         this.notes = notes;
         this.index = index;
         this.bar_width = bar_width;
@@ -434,7 +443,7 @@ class Bar {
 
             last_note_start_time = note.startTime;
             last_note_adj = adjusted_start;
-            
+
             const note_element = new Note(note).render();
 
             note_element.style.gridColumn = `${adjusted_start}`;
@@ -446,7 +455,7 @@ class Bar {
             const note_ = note.note.toLowerCase()
             if (topOffset <= 3) {
                 // add lines on/below
-                const lines_to_add = Math.ceil((4 - topOffset)/2)
+                const lines_to_add = Math.ceil((4 - topOffset) / 2)
                 for (let i = 0; i < lines_to_add; i++) {
                     const back_line = document.createElement('div');
                     back_line.classList.add('serenade-line');
@@ -465,7 +474,7 @@ class Bar {
                 bar.appendChild(back_line);
             } else if (topOffset >= 27) {
                 // add lines on/below
-                const lines_to_add = Math.ceil((topOffset - 26)/2)
+                const lines_to_add = Math.ceil((topOffset - 26) / 2)
 
                 for (let i = 0; i < lines_to_add; i++) {
                     const back_line = document.createElement('div');
@@ -476,21 +485,21 @@ class Bar {
                     bar.appendChild(back_line);
                 }
             }
-            
+
             // flip stem if on second staff
             if (topOffset >= 16) {
                 note_element.classList.add('serenade-note-lower')
             }
         }
 
-        
+
 
         // add bar border/end
         const vbar_top = document.createElement('div')
         bar.appendChild(vbar_top)
         vbar_top.style.gridRow = '5 / span 9'
         vbar_top.classList.add('serenade-bar-border')
-        
+
         if (this.left_right) {
             const vbar_bottom = document.createElement('div')
             vbar_bottom.classList.add('serenade-bar-border')
@@ -532,7 +541,7 @@ class Note {
         }*/
 
         const note_text = document.createTextNode(`${this.data.note}${this.data.octave}`);
-        
+
         note.appendChild(note_img);
         //note.appendChild(note_text);
 
@@ -550,7 +559,7 @@ class Clef {
         const clef = document.createElement('div');
         const img = document.createElement('img');
         clef.classList.add('serenade-clef');
-        
+
         if (this.clef === 'Treble') {
             img.src = './images/treble.png';
             img.alt = 'Treble Clef';
@@ -576,7 +585,7 @@ class TimeSig {
         const bottom = document.createElement('div');
         const [top_txt, bottom_text] = this.sig.split('/')
         sig.classList.add('serenade-time-sig');
-        
+
         top.classList.add('serenade-time-sig-top')
         bottom.classList.add('serenade-time-sig-bottom')
 
