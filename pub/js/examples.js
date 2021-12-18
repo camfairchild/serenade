@@ -293,7 +293,7 @@ example2 = {
         }
     },
     visualize: true,
-    editable: false,
+    editable: true,
 }
 
 s$('serenade.ex2', example2).render();
@@ -375,8 +375,8 @@ example3 = {
             ]
         }
     },
-    visualize: false,
-    editable: false,
+    visualize: true,
+    editable: true,
 }
 
 s$('serenade.ex3', example3).render();
