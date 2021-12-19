@@ -4,8 +4,6 @@ example1 = {
         'left': {
             clef: 'treble',
             time_signature: '4/4',
-            key: 'G',
-            key_signature: 'major',
             notes:
                 [
                     {
@@ -120,8 +118,6 @@ example1 = {
         'right': {
             clef: 'bass',
             time_signature: '4/4',
-            key: 'G',
-            key_signature: 'major',
             notes:
             [
                 {
@@ -227,8 +223,6 @@ example2 = {
         'left': {
             clef: 'treble',
             time_signature: '3/4',
-            key: 'G',
-            key_signature: 'major',
             notes:
                 [
                     {
@@ -269,8 +263,6 @@ example2 = {
         'right': {
             clef: 'bass',
             time_signature: '3/4',
-            key: 'G',
-            key_signature: 'major',
             notes:
             [
                 {
@@ -304,8 +296,6 @@ example3 = {
         'left': {
             clef: 'treble',
             time_signature: '3/2',
-            key: 'G',
-            key_signature: 'major',
             notes:
                 [
                     {
@@ -341,8 +331,6 @@ example3 = {
         'right': {
             clef: 'bass',
             time_signature: '3/2',
-            key: 'G',
-            key_signature: 'major',
             notes:
             [
                 {

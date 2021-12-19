@@ -1,60 +1,250 @@
 <html>
   <head>
-    <title>SerenadeJS Example</title>
-    <link rel="stylesheet" href="css/examples.css">
-    <link rel="stylesheet" href="/css/serenade.css">
+    <title>SerenadeJS Examples</title>
+    <link rel="stylesheet" href="css/examples.css" />
+    <link rel="stylesheet" href="/css/serenade.css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="/js/serenade.js"></script>
     <script defer src="/js/examples.js"></script>
   </head>
   <body>
     <h1>SerenadeJS Examples</h1>
+    <div class="navigation">
+      <a href="#documentation">Documentation</a>
+      <a href="#getting-started">Getting Started</a>
+      <a href="#api-documentation">API Documentation</a>
+    </div>
     <p>This is an example of SerenadeJS.</p>
-    <serenade class="ex1"></serenade>
-    <serenade class="ex2"></serenade>
-    <serenade class="ex3"></serenade>
-    <h2 id="api-demo">API Demonstration</h2>
-    <code>
-      const s = s$('serenade.ex4', example3);
-      s.data_ = example2
-      s.render()
-    </code>
-    <serenade class="ex4"></serenade>
-    <code>
-      const ser = new Serenade(example3);
-      const elem = ser.render()
-      const replace_ = document.querySelector('serenade.ex5');
-      replace_.innerHTML = '';
-      replace_.appendChild(elem);
-    </code>
-    <serenade class="ex5"></serenade>
-    <code>
-      const s_ = s$('serenade.ex8', example1);
-      s_.render();
-      let data_ = s_.data_;
-      data_.music['left'].notes[0].note = 'C';
-      s_.serenade.update(data_)
-      // notice the first note is a C rather than a D
-    </code>
-    <serenade class="ex8"></serenade>
-    <h2>Sizing</h2>
-    <p>You can control the size of Serenade objects using the font-size</p>
-    <code>
-      &lt;div&gt;
-        &lt;serenade class=&quot;ex6&quot; style=&quot;font-size: x-small&quot;&gt;&lt;/serenade&gt;
-      &lt;/div&gt;
-    </code>
-    <div>
-      <serenade class="ex6" style="font-size: x-small"></serenade>
+    <div class="examples">
+      <serenade class="ex1"></serenade>
+      <serenade class="ex2"></serenade>
+      <serenade class="ex3"></serenade>
+      <h2 id="api-demo">API Demonstration</h2>
+      <code>
+        const s = s$('serenade.ex4', example3); s.data_ = example2 s.render()
+      </code>
+      <serenade class="ex4"></serenade>
+      <code>
+        const ser = new Serenade(example3); const elem = ser.render() const
+        replace_ = document.querySelector('serenade.ex5'); replace_.innerHTML =
+        ''; replace_.appendChild(elem);
+      </code>
+      <serenade class="ex5"></serenade>
+      <code>
+        const s_ = s$('serenade.ex8', example1); s_.render(); let data_ =
+        s_.data_; data_.music['left'].notes[0].note = 'C';
+        s_.serenade.update(data_) // notice the first note is a C rather than a
+        D
+      </code>
+      <serenade class="ex8"></serenade>
+      <h2>Sizing</h2>
+      <p>You can control the size of Serenade objects using the font-size</p>
+      <code>
+        &lt;div&gt; &lt;serenade class=&quot;ex6&quot; style=&quot;font-size:
+        x-small&quot;&gt;&lt;/serenade&gt; &lt;/div&gt;
+      </code>
+      <div>
+        <serenade class="ex6" style="font-size: x-small"></serenade>
+      </div>
+      <p>Serenade uses flexbox so you can resize dynamically.</p>
+      <code>
+        &lt;div style=&quot;width: 50vw&quot; &gt;
+        &lt;serenade&gt;&lt;/serenade&gt; &lt;/div&gt;
+      </code>
+      <div style="width: 50vw; align-self: center">
+        <serenade class="ex7"></serenade>
+      </div>
     </div>
-    <p>Serenade uses flexbox so you can resize dynamically.</p>
-    <code>
-      &lt;div style=&quot;width: 50vw&quot; &gt;
-        &lt;serenade&gt;&lt;/serenade&gt;
-      &lt;/div&gt;
-    </code>
-    <div style="width: 50vw; align-self: center">
-      <serenade class="ex7"></serenade>
-    </div>
+    <h1 id="documentation">Documentation</h1>
+
+    <h2 id="getting-started">Getting Started</h2>
+    <h3 id="requirements">Requirements</h3>
+    <pre><code><span class="hljs-selector-tag">jQuery</span> ^3<span class="hljs-selector-class">.6</span><span class="hljs-selector-class">.0</span>
+    </code></pre>
+    <p>
+      You can inlcude jQuery in your code by linking it in your html, e.g. from
+      Google.<br />You will also need the css included with serenade and all the
+      images.<br /><a
+        href="https://raw.githubusercontent.com/csc309-fall-2021/js-library-fairchi5/main/pub/images/"
+        >https://raw.githubusercontent.com/csc309-fall-2021/js-library-fairchi5/main/pub/images/</a
+      ><br /><a
+        href="https://raw.githubusercontent.com/csc309-fall-2021/js-library-fairchi5/main/pub/css/serenade.css"
+        >https://raw.githubusercontent.com/csc309-fall-2021/js-library-fairchi5/main/pub/css/serenade.css</a
+      >
+    </p>
+    <p>You can get all the code for Serenade by downloading the repo.</p>
+    <pre><code>  git clone git@github<span class="hljs-selector-class">.com</span>:csc309-fall-<span class="hljs-number">2021</span>/js-library-fairchi5<span class="hljs-selector-class">.git</span> serenade
+    </code></pre>
+    <p>
+      Then, you can include the script file, jQuery, and the stylesheets in the
+      head of your html
+    </p>
+    <pre><code>   <span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-name">title</span>&gt;</span>SerenadeJS Example<span class="hljs-tag">&lt;/<span class="hljs-name">title</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-name">link</span> <span class="hljs-attr">rel</span>=<span class="hljs-string">"stylesheet"</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"https://raw.githubusercontent.com/csc309-fall-2021/js-library-fairchi5/main/pub/css/serenade.css"</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://raw.githubusercontent.com/csc309-fall-2021/js-library-fairchi5/main/pub/js/serenade.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+       <span class="hljs-tag">&lt;/<span class="hljs-name">head</span>&gt;</span>
+    </code></pre>
+    <p>
+      Serenade requires that you call it in your JS. This can be done in a few
+      ways.
+    </p>
+    <h4 id="serenade-query-selector">Serenade Query Selector</h4>
+    <p>
+      You can use the built-in Serenade query selector (jQuery syntax) to fill a
+      Serenade tag. HTML:
+    </p>
+    <pre><code>&lt;serenade <span class="hljs-class"><span class="hljs-keyword">class</span></span>=<span class="hljs-string">"ex1"</span>&gt;<span class="xml"><span class="hljs-tag">&lt;/<span class="hljs-name">serenade</span>&gt;</span></span>
+    </code></pre>
+    <p>JS:</p>
+    <pre><code>s$(<span class="hljs-string">'serenade.ex1'</span>, example).<span class="hljs-keyword">render</span>();
+    </code></pre>
+    <h4 id="render-then-replace-with-jquery">
+      Render Then Replace with jQuery
+    </h4>
+    <p>
+      You can also call render and Serenade will create a DOM element that you
+      can insert into your HTML page.<br />HTML:
+    </p>
+    <pre><code>&lt;serenade <span class="hljs-class"><span class="hljs-keyword">class</span></span>=<span class="hljs-string">"ex2"</span>&gt;<span class="xml"><span class="hljs-tag">&lt;/<span class="hljs-name">serenade</span>&gt;</span></span>
+    </code></pre>
+    <p>JS:</p>
+    <pre><code><span class="hljs-keyword">const</span> ser = <span class="hljs-keyword">new</span> Serenade(example);
+    <span class="hljs-keyword">const</span> elem = ser.render()
+    <span class="hljs-keyword">const</span> replace_ = <span class="hljs-built_in">document</span>.<span class="hljs-built_in">querySelector</span>(<span class="hljs-string">'serenade.ex2'</span>);
+    replace_.innerHTML = <span class="hljs-string">''</span>;
+    replace_.appendChild(elem);
+    </code></pre>
+    <h4 id="updating-serenade-data">Updating Serenade data</h4>
+    <p>
+      You can also update the data in Serenade using
+      <code>Serenade.update(data)</code><br />HTML:
+    </p>
+    <pre><code>&lt;serenade <span class="hljs-class"><span class="hljs-keyword">class</span></span>=<span class="hljs-string">"ex3"</span>&gt;<span class="xml"><span class="hljs-tag">&lt;/<span class="hljs-name">serenade</span>&gt;</span></span>
+    </code></pre>
+    <p>JS:</p>
+    <pre><code><span class="hljs-comment">// select element with Serenade</span>
+    <span class="hljs-keyword">const</span> s_ = s$(<span class="hljs-string">'serenade.ex3'</span>, example);
+    <span class="hljs-comment">// render Serenade object in place</span>
+    s_.render();
+    <span class="hljs-comment">// copy Serenade object data and modify a note</span>
+    <span class="hljs-keyword">let</span> data_ = s_.data_;
+    data_.music[<span class="hljs-string">'left'</span>].notes[<span class="hljs-number">0</span>].note = <span class="hljs-string">'C'</span>;
+    <span class="hljs-comment">// call update, this re-renders the DOM</span>
+    s_.serenade.update(data_)
+    </code></pre>
+    <h4 id="serenade-class">Serenade Class</h4>
+    <p>
+      You can create a <code>Serenade</code> class instance and render it
+      separately.<br />HTML:
+    </p>
+    <pre><code>&lt;serenade <span class="hljs-class"><span class="hljs-keyword">class</span></span>=<span class="hljs-string">"ex4"</span>&gt;<span class="xml"><span class="hljs-tag">&lt;/<span class="hljs-name">serenade</span>&gt;</span></span>
+    </code></pre>
+    <p>JS:</p>
+    <pre><code>// create<span class="hljs-built_in"> instance
+    </span>const ser =<span class="hljs-built_in"> new </span>Serenade(example);
+    // render to DOM element<span class="hljs-built_in">
+    const </span>elem = ser.render()
+    // use jQuery to insert into webpage<span class="hljs-built_in">
+    const </span>replace_ = document.querySelector('serenade.ex4);
+    replace_.innerHTM<span class="hljs-class">L = '';</span>
+    replace_.appendChild(elem);
+    </code></pre>
+    <h1 id="api-documentation">API Documentation</h1>
+    <h5 id="serenade-data-format">Serenade Data Format</h5>
+    <p>Serenade takes JSON input in the following format Example format:</p>
+    <pre><code><span class="hljs-string">tempo:</span> <span class="hljs-number">90</span>, <span class="hljs-comment">// visualization tempo in BPM</span>
+<span class="hljs-string">music:</span> {
+    <span class="hljs-string">'left'</span>: { <span class="hljs-comment">// left hand</span>
+<span class="hljs-symbol">        clef:</span> <span class="hljs-string">'treble'</span>, <span class="hljs-comment">// clef: bass, treble</span>
+<span class="hljs-symbol">        time_signature:</span> <span class="hljs-string">'3/2'</span>, <span class="hljs-comment">// time signature: #/#, c</span>
+<span class="hljs-symbol">        notes:</span>
+            [
+                {
+<span class="hljs-symbol">                    note:</span> <span class="hljs-string">'G'</span>,
+<span class="hljs-symbol">                    octave:</span> <span class="hljs-string">'5'</span>,
+<span class="hljs-symbol">                    duration:</span> <span class="hljs-string">'sixteenth'</span>, <span class="hljs-comment">// whole, quarter, eighth, sixteenth, 16th</span>
+<span class="hljs-symbol">                    startTime:</span> <span class="hljs-number">0</span>, <span class="hljs-comment">// beat to start at in the time signature</span>
+                },
+            ]
+    },
+    <span class="hljs-string">'right'</span>: {
+<span class="hljs-symbol">        clef:</span> <span class="hljs-string">'bass'</span>,
+<span class="hljs-symbol">        time_signature:</span> <span class="hljs-string">'3/2'</span>,
+<span class="hljs-symbol">        notes:</span> []
+    }
+},
+<span class="hljs-string">visualize:</span> <span class="hljs-literal">true</span>, <span class="hljs-comment">// allow visualizer</span>
+<span class="hljs-string">editable:</span> <span class="hljs-literal">true</span>, <span class="hljs-comment">// allow editing the Serenade object data</span>
+</code></pre>
+    <p>The left and right hand is optional Example format:</p>
+    <pre><code><span class="hljs-attribute">tempo</span>: <span class="hljs-number">90</span>, <span class="hljs-comment">// visualization tempo in BPM</span>
+<span class="hljs-attribute">music</span>: {
+    <span class="hljs-attribute">clef</span>: <span class="hljs-string">'treble'</span>, <span class="hljs-comment">// clef: bass, treble</span>
+    <span class="hljs-attribute">time_signature</span>: <span class="hljs-string">'3/2'</span>, <span class="hljs-comment">// time signature: #/#, c</span>
+    <span class="hljs-attribute">notes</span>:
+        [
+            {
+                <span class="hljs-attribute">note</span>: <span class="hljs-string">'G'</span>,
+                <span class="hljs-attribute">octave</span>: <span class="hljs-string">'5'</span>,
+                <span class="hljs-attribute">duration</span>: <span class="hljs-string">'sixteenth'</span>, <span class="hljs-comment">// whole, quarter, eighth, sixteenth, 16th</span>
+                <span class="hljs-attribute">startTime</span>: <span class="hljs-number">0</span>, <span class="hljs-comment">// beat to start at in the time signature</span>
+            },
+        ]
+},
+<span class="hljs-attribute">visualize</span>: true,
+<span class="hljs-attribute">editable</span>: true,
+</code></pre>
+    <h5 id="s-">s$</h5>
+    <p>The Serenade selector. Uses jQuery syntax to select an element.</p>
+    <h6 id="usage">Usage</h6>
+    <pre><code> <span class="hljs-keyword">const</span> s = s$(<span class="hljs-string">'.selector'</span>, data)
+ <span class="hljs-comment">// returns the function as an object</span>
+</code></pre>
+    <h6 id="s-data_">s$(...).data_</h6>
+    <p>Conatins the Serenade data as JS object.</p>
+    <pre><code> <span class="hljs-selector-tag">s</span><span class="hljs-selector-class">.data_</span>
+</code></pre>
+    <h5 id="s-render-">s$(...).render()</h5>
+    <pre><code><span class="hljs-keyword">const</span> s.render()
+<span class="hljs-keyword">this</span>.render = render;
+<span class="hljs-keyword">this</span>.serenade;
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">render</span>(<span class="hljs-params"></span>) </span>{
+    <span class="hljs-keyword">this</span>.serenade = <span class="hljs-keyword">new</span> Serenade(<span class="hljs-keyword">this</span>.data_);
+    <span class="hljs-keyword">const</span> outer = <span class="hljs-keyword">this</span>.serenade.render();
+
+    <span class="hljs-comment">// remove any existing children</span>
+    element.innerHTML = <span class="hljs-string">''</span>;
+
+    <span class="hljs-comment">// fill with the visualized data</span>
+    element.appendChild(outer);
+}
+
+<span class="hljs-keyword">if</span> (!element) {
+    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">`Element <span class="hljs-subst">${selector}</span> not found`</span>);
+} <span class="hljs-keyword">else</span> {
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>
+}
+</code></pre>
+    <h5 id="serenade">Serenade</h5>
+    <p>The Serenade class. Can be used to render a Serenade object.</p>
+    <h6 id="serenade-update-">Serenade.update(...)</h6>
+    <p>
+      This method will update the DOM object rendered by Serenade with the data
+      passed to Serenade.
+    </p>
+    <pre><code>// <span class="hljs-keyword">select</span> <span class="hljs-keyword">element</span> <span class="hljs-keyword">to</span> <span class="hljs-keyword">replace</span>, <span class="hljs-keyword">returns</span> Serenade <span class="hljs-keyword">object</span>
+const s_ = s$(<span class="hljs-string">'serenade.ex'</span>, exampleData);
+// render and <span class="hljs-keyword">replace</span> the <span class="hljs-keyword">element</span> selected
+s_.render();
+// grab the data from Serenade
+let data_ = s_.data_;
+// modify t
+data_.music['left'].notes[0].note = 'C';
+// <span class="hljs-keyword">call</span> <span class="hljs-keyword">update</span>() <span class="hljs-keyword">with</span> the <span class="hljs-keyword">new</span> <span class="hljs-keyword">data</span>
+s_.serenade.update(data_)
+</code></pre>
   </body>
 </html>
