@@ -188,4 +188,4 @@ This method will update the DOM object rendered by Serenade with the data passed
     s_.serenade.update(data_)
 
 # Third-party libraries
-[express](https://www.npmjs.com/package/express), [jQuery](jquery.com)
+[express](https://www.npmjs.com/package/express), [jQuery](jquery.com), [Markdown to HTML for Documentation](https://markdowntohtml.com/)
