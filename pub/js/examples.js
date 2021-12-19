@@ -381,6 +381,10 @@ example3 = {
 
 s$('serenade.ex3', example3).render();
 
+s$('serenade.ex6', example1).render();
+
+s$('serenade.ex7', example1).render();
+
 const s = s$('serenade.ex4', example3);
 s.data_ = example2
 s.render()

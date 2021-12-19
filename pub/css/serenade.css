@@ -1,9 +1,9 @@
 .serenade-outer {
-    font-size: 15px;
     margin-top: 2em;
     display: flex;
     flex-direction: column;
     row-gap: 1em;
+    margin-bottom: 2em;
 }
 
 .serenade-edit-outer {
@@ -14,14 +14,14 @@
 
 .serenade-edit-button {
     align-self: flex-end;  
-    width: 1.75rem;
-    height: 1.75rem;
+    width: 1.75em;
+    height: 1.75em;
 }
 
     .serenade-edit-button-edit {
         background-image: url(/images/edit.svg);
         background-origin: content-box;
-        padding: 0.3em 0.1em 0.1em 0.3em;
+        padding: 0.1em 0.2em 0.1em 0.1em;
         background-repeat: no-repeat;
     }
 
@@ -55,7 +55,8 @@
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    border: 2px solid red;
+    border: 2px solid #ccc;
+    border-radius: 0.5em;
     padding: 10px;
 }
 
@@ -196,8 +197,8 @@
     align-self: flex-start;
     margin-top: 0.4em;
     margin-right: 0.4em;
-    width: 1.75rem;
-    height: 1.75rem;
+    width: 1.75em;
+    height: 1.75em;
     background-image: url(/images/play.svg);
     background-origin: border-box;
     background-position: center;
@@ -229,8 +230,8 @@
 
 .serenade-visualize-button {
     align-self: flex-end;
-    width: 1.75rem;
-    height: 1.75rem;
+    width: 1.75em;
+    height: 1.75em;
 }
 
     .serenade-visualize-button-show {
@@ -270,14 +271,3 @@
         width: 3.45%;
         border: 0.1px solid #000;
     }
-
-
-@keyframes playBottom {
-    from {background-color: white;}
-    to {background-color: #e64b40;}
-  }
-  
-@keyframes playTop {
-    from {background-color: black;}
-    to {background-color: #e64b40;}
-  }

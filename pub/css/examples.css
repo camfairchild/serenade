@@ -1,0 +1,20 @@
+body {
+    display: flex;
+    flex-direction: column;
+    margin: 1em;
+    font-family: sans-serif;
+}
+
+code {
+  font-family: Consolas, "courier new";
+  color: crimson;
+  background-color: #f1f1f1;
+  padding: 2em;
+  font-size: 105%;
+  align-self: center;
+  white-space: pre-wrap;
+}
+
+serenade {
+    font-size: 15px;
+}

@@ -1,6 +1,7 @@
 <html>
   <head>
     <title>SerenadeJS Example</title>
+    <link rel="stylesheet" href="css/examples.css">
     <link rel="stylesheet" href="/css/serenade.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="/js/serenade.js"></script>
@@ -12,8 +13,39 @@
     <serenade class="ex1"></serenade>
     <serenade class="ex2"></serenade>
     <serenade class="ex3"></serenade>
-    <h2>API Demonstration</h2>
+    <h2 id="api-demo">API Demonstration</h2>
+    <code>
+      const s = s$('serenade.ex4', example3);
+      s.data_ = example2
+      s.render()
+    </code>
     <serenade class="ex4"></serenade>
+    <code>
+      const ser = new Serenade(example3);
+      const elem = ser.render()
+      const replace_ = document.querySelector('serenade.ex5');
+      replace_.innerHTML = '';
+      replace_.appendChild(elem);
+    </code>
     <serenade class="ex5"></serenade>
+    <h2>Sizing</h2>
+    <p>You can control the size of Serenade objects using the font-size</p>
+    <code>
+      &lt;div&gt;
+        &lt;serenade class=&quot;ex6&quot; style=&quot;font-size: x-small&quot;&gt;&lt;/serenade&gt;
+      &lt;/div&gt;
+    </code>
+    <div>
+      <serenade class="ex6" style="font-size: x-small"></serenade>
+    </div>
+    <p>Serenade uses flexbox so you can resize dynamically.</p>
+    <code>
+      &lt;div style=&quot;width: 50vw&quot; &gt;
+        &lt;serenade&gt;&lt;/serenade&gt;
+      &lt;/div&gt;
+    </code>
+    <div style="width: 50vw; align-self: center">
+      <serenade class="ex7"></serenade>
+    </div>
   </body>
 </html>
