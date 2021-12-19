@@ -28,6 +28,15 @@
       replace_.appendChild(elem);
     </code>
     <serenade class="ex5"></serenade>
+    <code>
+      const s_ = s$('serenade.ex8', example1);
+      s_.render();
+      let data_ = s_.data_;
+      data_.music['left'].notes[0].note = 'C';
+      s_.serenade.update(data_)
+      // notice the first note is a C rather than a D
+    </code>
+    <serenade class="ex8"></serenade>
     <h2>Sizing</h2>
     <p>You can control the size of Serenade objects using the font-size</p>
     <code>

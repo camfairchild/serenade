@@ -385,6 +385,12 @@ s$('serenade.ex6', example1).render();
 
 s$('serenade.ex7', example1).render();
 
+const s_ = s$('serenade.ex8', example1);
+s_.render();
+let data_ = s_.data_;
+data_.music['left'].notes[0].note = 'C';
+s_.serenade.update(data_)
+
 const s = s$('serenade.ex4', example3);
 s.data_ = example2
 s.render()
