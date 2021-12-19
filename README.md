@@ -86,6 +86,106 @@ JS:
     replace_.innerHTML = '';
     replace_.appendChild(elem);
 
+### API Documentation
+
+##### Serenade Data Format
+Serenade takes JSON input in the following format
+Example format:  
+
+    tempo: 90, // visualization tempo in BPM
+    music: {
+        'left': { // left hand
+            clef: 'treble', // clef: bass, treble
+            time_signature: '3/2', // time signature: #/#, c
+            notes:
+                [
+                    {
+                        note: 'G',
+                        octave: '5',
+                        duration: 'sixteenth', // whole, quarter, eighth, sixteenth, 16th
+                        startTime: 0, // beat to start at in the time signature
+                    },
+                ]
+        },
+        'right': {
+            clef: 'bass',
+            time_signature: '3/2',
+            notes: []
+        }
+    },
+    visualize: true, // allow visualizer
+    editable: true, // allow editing the Serenade object data
+The left and right hand is optional
+Example format:  
+
+    tempo: 90, // visualization tempo in BPM
+    music: {
+        clef: 'treble', // clef: bass, treble
+        time_signature: '3/2', // time signature: #/#, c
+        notes:
+            [
+                {
+                    note: 'G',
+                    octave: '5',
+                    duration: 'sixteenth', // whole, quarter, eighth, sixteenth, 16th
+                    startTime: 0, // beat to start at in the time signature
+                },
+            ]
+    },
+    visualize: true,
+    editable: true,
+
+##### s$
+The Serenade selector. Uses jQuery syntax to select an element.
+###### Usage
+
+     const s = s$('.selector', data)
+     // returns the function as an object
+
+###### s$(...).data_
+Conatins the Serenade data as JS object.  
+
+     s.data_
+
+##### s$(...).render()
+
+    const s.render()
+    this.render = render;
+    this.serenade;
+
+    function render() {
+        this.serenade = new Serenade(this.data_);
+        const outer = this.serenade.render();
+
+        // remove any existing children
+        element.innerHTML = '';
+
+        // fill with the visualized data
+        element.appendChild(outer);
+    }
+
+    if (!element) {
+        throw new Error(`Element ${selector} not found`);
+    } else {
+        return this
+    }
+
+##### Serenade
+The Serenade class. Can be used to render a Serenade object.  
+
+###### Serenade.update(...)
+This method will update the DOM object rendered by Serenade with the data passed to Serenade.  
+    
+    // select element to replace, returns Serenade object
+    const s_ = s$('serenade.ex', exampleData);
+    // render and replace the element selected
+    s_.render();
+    // grab the data from Serenade
+    let data_ = s_.data_;
+    // modify t
+    data_.music['left'].notes[0].note = 'C';
+    // call update() with the new data
+    s_.serenade.update(data_)
 
 # Third-party libraries
 [express](https://www.npmjs.com/package/express), [jQuery](jquery.com)
