@@ -813,6 +813,12 @@ function s$(selector, data) {
 }
     global.s$ = s$;
     global.Serenade = Serenade;
+    global.Note = Note;
+    global.Clef = Clef;
+    global.TimeSig = TimeSig;
+    global.Bar = Bar;
+    global.Staff = Staff;
+    global.Music = Music;
 
 })(window, window.document, $);
 
