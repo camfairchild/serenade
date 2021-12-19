@@ -1,3 +1,4 @@
+(function(global, document, $) {
 class Serenade {
     constructor(data) {
         if (data.music.left || data.music.right) {
@@ -810,4 +811,8 @@ function s$(selector, data) {
         return this
     }
 }
+    global.s$ = s$;
+    global.Serenade = Serenade;
+
+})(window, window.document, $);
 
